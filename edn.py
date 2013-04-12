@@ -14,7 +14,7 @@ STOP_CHARS = " ,\n\r\t"
 def coroutine(func):
     def start(*args,**kwargs):
         cr = func(*args,**kwargs)
-        cr.next()
+        next(cr)
         return cr
     return start
 
@@ -22,7 +22,7 @@ def coroutine(func):
 def printer():
     while True:
         value = (yield)
-        print value
+        print(value)
 
 @coroutine
 def appender(l):
@@ -51,7 +51,7 @@ def tag_handler(tag_name):
     if tag_name in tag_handlers:
         yield tag_handlers[tag_name](elements[0]), True
     else:
-        print "No tag handler for %s" % tag_name
+        print("No tag handler for %s" % tag_name)
         yield None, True
 
 @coroutine
@@ -162,7 +162,7 @@ def parser(target, stop=None):
             else:
                 if len(l)%2:
                     raise Exception("Map literal must contain an even number of elements")
-                target.send(dict(zip(l[::2], l[1::2]))) # No frozendict yet
+                target.send(dict(list(zip(l[::2], l[1::2])))) # No frozendict yet
         else:
             raise ValueError("Unexpected character in edn", c)
 
@@ -177,8 +177,8 @@ def loads(s):
     return l[0]
 
 if __name__ == '__main__':
-    print loads(b'(:graham/stratton true  \n , "A string with \\"s" true #uuid "f81d4fae7dec11d0a76500a0c91e6bf6")')
-    print loads(b'[\space \\\xE2\x82\xAC [true []] ;true\n[true #inst "2012-09-10T23:39:43.309-00:00" true ""]]')
-    print loads(b' {true false nil    [true, ()] 6 {#{nil false} {nil \\newline} }}')
-    print loads(b'[#{6.22e-18, -3.1415, 1} true #graham #{"pie" "chips"} "work"]')
-    print loads(b'(\\a .5)')
+    print(loads(b'(:graham/stratton true  \n , "A string with \\"s" true #uuid "f81d4fae7dec11d0a76500a0c91e6bf6")'))
+    print(loads(b'[\space \\\xE2\x82\xAC [true []] ;true\n[true #inst "2012-09-10T23:39:43.309-00:00" true ""]]'))
+    print(loads(b' {true false nil    [true, ()] 6 {#{nil false} {nil \\newline} }}'))
+    print(loads(b'[#{6.22e-18, -3.1415, 1} true #graham #{"pie" "chips"} "work"]'))
+    print(loads(b'(\\a .5)'))
